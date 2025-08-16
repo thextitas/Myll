@@ -386,7 +386,7 @@ async def stats_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
     total_users = cur.fetchone()[0]
 
     # Get total referrals
-    cur.execute("SELECT SUM(referrals) FROM users")
+    cur.execute("SELECT SUM(referrals) FROM referrals")
     total_referrals = cur.fetchone()[0] or 0
 
     conn.close()

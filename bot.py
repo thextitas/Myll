@@ -181,6 +181,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = [
         [InlineKeyboardButton("🎥 Get Video (2 coins)", callback_data="get_video")],
         [InlineKeyboardButton("💰 My Coins", callback_data="check_coins")],
+        [InlineKeyboardButton("🎁 Daily Bonus (20 coins)", callback_data="daily_bonus")],
         [InlineKeyboardButton("👥 Referral Link", callback_data="referral")]
     ]
     await update.message.reply_text("Welcome! Choose an option:", reply_markup=InlineKeyboardMarkup(keyboard))
@@ -212,7 +213,6 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         # Show submenu with Check Balance and Daily Bonus buttons
         keyboard = [
             [InlineKeyboardButton("💰 Check Balance", callback_data="check_balance")],
-            [InlineKeyboardButton("🎁 Daily Bonus (20 coins)", callback_data="daily_bonus")],
             [InlineKeyboardButton("💳 Top Up", callback_data="top_up")],
         ] + back_keyboard
         await query.edit_message_text("Choose an option:", reply_markup=InlineKeyboardMarkup(keyboard))

@@ -146,12 +146,12 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     # Handle new users (first-time starters)
     if is_new_user:
-        # Give 20 free coins to new users
+        # Give 10 free coins to new users
         cur.execute("""
             INSERT INTO users (user_id, coins, created_at) 
             VALUES (?, ?, ?)
-            """, (user_id, 20, datetime.utcnow().isoformat()))
-        welcome_text = "🎉 Welcome! You received 20 free coins!"
+            """, (user_id, 10, datetime.utcnow().isoformat()))
+        welcome_text = "🎉 Welcome! You received 10 free coins!"
     else:
         welcome_text = "Welcome back!"
     

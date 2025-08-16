@@ -378,7 +378,7 @@ async def stats_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_user.id != ADMIN_ID:
         await update.message.reply_text("Unauthorized.")
         return
-    conn = sqlite3.connect("bot.db")  # replace with your database file
+    conn = sqlite3.connect("coins.db")  # replace with your database file
     cur = conn.cursor()
 
     # Get total users

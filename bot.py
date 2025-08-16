@@ -46,7 +46,7 @@ BOT_TOKEN = os.environ.get("BOT_TOKEN")
 ADMIN_ID = int(os.environ.get("ADMIN_ID", "0"))
 
 # --- DB setup ---
-conn = sqlite3.connect("coins.db", check_same_thread=False)
+conn = sqlite3.connect("/mnt/data/coins.db", check_same_thread=False)
 cur = conn.cursor()
 cur.execute("""
 CREATE TABLE IF NOT EXISTS users (
@@ -379,7 +379,7 @@ async def stats_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_user.id != ADMIN_ID:
         await update.message.reply_text("Unauthorized.")
         return
-    conn = sqlite3.connect("coins.db")  # replace with your database file
+    conn = sqlite3.connect("/mnt/data/coins.db")  # replace with your database file
     cur = conn.cursor()
 
     # Get total users

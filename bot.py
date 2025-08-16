@@ -285,6 +285,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         keyboard = [
             [InlineKeyboardButton("🎥 Get Another Video (2 coins)", callback_data="get_video")],
             [InlineKeyboardButton("💰 My Coins", callback_data="check_coins")],
+            [InlineKeyboardButton("🎁 Daily Bonus (20 coins)", callback_data="daily_bonus")],
             [InlineKeyboardButton("👥 Referral Link", callback_data="referral")]
         ]
         await query.edit_message_text("Welcome back! Choose an option:", reply_markup=InlineKeyboardMarkup(keyboard))

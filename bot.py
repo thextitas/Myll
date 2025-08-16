@@ -385,16 +385,14 @@ async def stats_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
     cur.execute("SELECT COUNT(*) FROM users")
     total_users = cur.fetchone()[0]
 
-    # Get total referrals
-    cur.execute("SELECT SUM(referrals) FROM referrals")
+    # # Get total referrals (number of rows in referrals table)
+    cur.execute("SELECT COUNT(*)  FROM referrals")
     total_referrals = cur.fetchone()[0] or 0
 
     conn.close()
 
-    update.message.reply_text(
-        f"📊 Bot Statistics:\n\n"
-        f"Total users: {total_users}\n"
-        f"Total referrals: {total_referrals}"
+    await update.message.reply_text(
+        f"Total users: {total_users}\nTotal referrals: {total_referrals}"
     )
 
 

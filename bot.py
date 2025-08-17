@@ -312,11 +312,11 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
     elif data == "get_video":
         video = get_random_video()
-        if not video:
+        if not video_info:
             await query.edit_message_text("No video is configured. Admin must /setvideo first.")
             return
     
-        file_id, cost = video
+        file_ref, cost = video_info  # This defines file_ref
         current_coins = get_coins(user_id)
     
         if current_coins < cost:
@@ -343,8 +343,11 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
         # Handle both storage types
         try:
-            if os.path.exists(str(file_ref)):  # Filesystem video
-                with open(file_ref, 'rb') as video_file:
+            # Store file_ref in variable before the try block to ensure it exists
+            video_to_send = file_ref
+
+            if os.path.exists(str(video_to_send)):  # Filesystem video
+                with open(ideo_to_send, 'rb') as video_file:
                     await context.bot.send_video(
                         chat_id=user_id,
                         video=video_file,
@@ -354,7 +357,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
             else:  # Telegram file_id
                 await context.bot.send_video(
                     chat_id=user_id,
-                    video=file_ref,
+                    video=video_to_send,
                     caption=f"Remaining coins: {current_coins - cost}",
                     protect_content=True
                )

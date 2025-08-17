@@ -207,7 +207,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = [
         [InlineKeyboardButton("🎥 Get Video (2 coins)", callback_data="get_video")],
         [InlineKeyboardButton("💰 My Coins", callback_data="check_coins")],
-        [InlineKeyboardButton("🎁 Daily Bonus (20 coins)", callback_data="daily_bonus")],
+        [InlineKeyboardButton("🎁 Daily Bonus (10 coins)", callback_data="daily_bonus")],
         [InlineKeyboardButton("👥 Referral Link", callback_data="referral")]
     ]
     await update.message.reply_text("Welcome! Choose an option:", reply_markup=InlineKeyboardMarkup(keyboard))
@@ -300,7 +300,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         now = datetime.utcnow()
         if last_claim is None or now - last_claim > timedelta(days=1):
             add_coins(user_id, 20, meta="daily_bonus")
-            text = "You claimed your daily bonus of 20 coins! 🎉"
+            text = "You claimed your daily bonus of 10 coins! 🎉"
         else:
             text = "You have already claimed your daily bonus today. Try again tomorrow."
         await query.edit_message_text(
@@ -311,7 +311,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         keyboard = [
             [InlineKeyboardButton("🎥 Get Another Video (2 coins)", callback_data="get_video")],
             [InlineKeyboardButton("💰 My Coins", callback_data="check_coins")],
-            [InlineKeyboardButton("🎁 Daily Bonus (20 coins)", callback_data="daily_bonus")],
+            [InlineKeyboardButton("🎁 Daily Bonus (10 coins)", callback_data="daily_bonus")],
             [InlineKeyboardButton("👥 Referral Link", callback_data="referral")]
         ]
         await query.edit_message_text("Welcome back! Choose an option:", reply_markup=InlineKeyboardMarkup(keyboard))

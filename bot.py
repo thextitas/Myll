@@ -132,7 +132,7 @@ async def get_random_video(context):  # Added 'async' and 'context' parameter
             if file_info.file_size > 0:  # Basic validity check
                 return (file_id, cost)
         except Exception as e:
-            pprint(f"Removing invalid video {file_id}: {e}")
+            print(f"Removing invalid video {file_id}: {e}")
             cur.execute("DELETE FROM videos WHERE file_id=?", (file_id,))
             conn.commit()
             continue

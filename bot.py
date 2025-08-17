@@ -121,6 +121,33 @@ def save_referral(referrer_id, referred_id):
     cur.execute("INSERT INTO referrals (referrer_id, referred_id, rewarded, created_at) VALUES (?, ?, ?, ?)",
                 (referrer_id, referred_id, 1, datetime.utcnow().isoformat()))
     conn.commit()
+
+async def delvideo(update, context):
+    videos = load_videos()
+
+    # If the command is a reply to a video
+    if update.message.reply_to_message and update.message.reply_to_message.video:
+        file_id = update.message.reply_to_message.video.file_id
+        if file_id in videos:
+            videos.remove(file_id)
+            save_videos(videos)
+            await update.message.reply_text("Video removed successfully.")
+        else:
+            await update.message.reply_text("This video is not in the list.")
+        return
+
+    # Fallback to index-based deletion
+    if len(context.args) == 0:
+        await update.message.reply_text("Usage: /delvideo <index>")
+        return
+    
+    try:
+        index = int(context.args[0]) - 1
+        removed = videos.pop(index)
+        save_videos(videos)
+        await update.message.reply_text(f"Removed video: {removed}")
+    except (ValueError, IndexError):
+        await update.message.reply_text("Invalid index.")
 async def save_video(update: Update, context: ContextTypes.DEFAULT_TYPE):
     file_id = update.message.video.file_id
     cost = 2  # default cost (can change if you want)
@@ -434,6 +461,7 @@ def main():
     app.add_handler(CommandHandler("balance", balance))
     app.add_handler(CommandHandler("addcoins", addcoins_cmd))
     app.add_handler(MessageHandler(filters.VIDEO, save_video))
+    app.add_handler(CommandHandler("delvideo", delvideo))
     print("Bot started (polling)...")
     app.run_polling()
 

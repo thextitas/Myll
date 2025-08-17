@@ -307,7 +307,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
             reply_markup=InlineKeyboardMarkup(back_keyboard)
         )
     elif data == "get_video":
-        video = get_random_video()
+        video = await get_random_video(context)
         if not video:
             await query.edit_message_text("No video is configured. Admin must /setvideo first.")
             return

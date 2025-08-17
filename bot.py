@@ -75,15 +75,29 @@ CREATE TABLE IF NOT EXISTS transactions (
   created_at TEXT
 );
 """)
+# MODIFIED videos table with new columns
 cur.execute("""
 CREATE TABLE IF NOT EXISTS videos (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  file_id TEXT,
+  file_id TEXT,               -- Stores either Telegram file_id or filesystem path
   cost INTEGER DEFAULT 2,
-  title TEXT
+  title TEXT,
+  storage_type TEXT DEFAULT 'database',  -- 'database' or 'filesystem'
+  created_at TEXT DEFAULT CURRENT_TIMESTAMP  -- For cleanup of old videos
 );
 """)
+
+# BACKWARD COMPATIBILITY: Add new columns if table already exists
+try:
+    cur.execute("ALTER TABLE videos ADD COLUMN storage_type TEXT DEFAULT 'database'")
+    cur.execute("ALTER TABLE videos ADD COLUMN created_at TEXT DEFAULT CURRENT_TIMESTAMP")
+    conn.commit()
+except sqlite3.OperationalError:
+    pass  # Columns already exist
+
 conn.commit()
+# Ensure video directory exists
+os.makedirs("/mnt/data/videos", exist_ok=True)
 
 # --- Helper functions ---
 def ensure_user(user_id, referred_by=None):
@@ -273,8 +287,8 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         last_claim = get_last_daily_claim(user_id)
         now = datetime.utcnow()
         if last_claim is None or now - last_claim > timedelta(days=1):
-            add_coins(user_id, 20, meta="daily_bonus")
-            text = "You claimed your daily bonus of 20 coins! 🎉"
+            add_coins(user_id, 10, meta="daily_bonus")
+            text = "You claimed your daily bonus of 10 coins! 🎉"
         else:
             text = "You have already claimed your daily bonus today. Try again tomorrow."
         await query.edit_message_text(
@@ -320,27 +334,47 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await query.answer()
             return
     
-        # If has coins - send video with buttons
+        # Deduct coins regardless of storage type
         deduct_coins(user_id, cost, meta="video_purchase")
         keyboard = [
             [InlineKeyboardButton("🎥 Get Another Video (2 coins)", callback_data="get_video")],
             [InlineKeyboardButton("💳 Top Up", callback_data="top_up")]
         ]
     
-        # FIRST send the video
-        await context.bot.send_video(
-            chat_id=user_id,
-            video=file_id,
-            caption=f"Remaining coins: {current_coins - cost}",
-            protect_content=True
-        )
-        
-        # THEN send the buttons as a SEPARATE text message
-        await context.bot.send_message(
-            chat_id=user_id,
-            text="What would you like to do next?",
-            reply_markup=InlineKeyboardMarkup(keyboard)
-        )
+        # Handle both storage types
+        try:
+            if os.path.exists(str(file_ref)):  # Filesystem video
+                with open(file_ref, 'rb') as video_file:
+                    await context.bot.send_video(
+                        chat_id=user_id,
+                        video=video_file,
+                        caption=f"Remaining coins: {current_coins - cost}",
+                        protect_content=True
+                    )
+            else:  # Telegram file_id
+                await context.bot.send_video(
+                    chat_id=user_id,
+                    video=file_ref,
+                    caption=f"Remaining coins: {current_coins - cost}",
+                    protect_content=True
+               )
+         
+            # Send follow-up buttons
+            await context.bot.send_message(
+                chat_id=user_id,
+                text="What would you like to do next?",
+                reply_markup=InlineKeyboardMarkup(keyboard)
+            )
+    
+        except Exception as e:
+            # Refund if video sending fails
+            add_coins(user_id, cost, meta="video_refund_failed_delivery")
+            await context.bot.send_message(
+                chat_id=user_id,
+                text="❌ Failed to send video. Your coins have been refunded.",
+                reply_markup=InlineKeyboardMarkup(keyboard)
+            )
+            print(f"Video send error: {e}")
     
         await query.answer()
         

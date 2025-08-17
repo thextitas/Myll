@@ -31,6 +31,7 @@ def save_videos(videos):
     with open(VIDEOS_FILE, "w") as f:
         json.dump(videos, f)
 
+
 def add_video(file_id):
     videos = load_videos()
     if file_id not in videos:
@@ -120,6 +121,18 @@ def save_referral(referrer_id, referred_id):
     cur.execute("INSERT INTO referrals (referrer_id, referred_id, rewarded, created_at) VALUES (?, ?, ?, ?)",
                 (referrer_id, referred_id, 1, datetime.utcnow().isoformat()))
     conn.commit()
+async def save_video(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    file_id = update.message.video.file_id
+    cost = 2  # default cost (can change if you want)
+    # Avoid duplicates
+    cur.execute("SELECT 1 FROM videos WHERE file_id = ?", (file_id,))
+    if cur.fetchone():
+        await update.message.reply_text("⚠️ This video is already saved.")
+        return
+
+    cur.execute("INSERT INTO videos (file_id, cost) VALUES (?, ?)", (file_id, cost))
+    conn.commit()
+    await update.message.reply_text("✅ Video saved!")
 
 async def get_random_video(context):  # Added 'async' and 'context' parameter
     """Only returns videos that pass Telegram's validation"""

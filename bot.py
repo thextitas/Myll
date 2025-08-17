@@ -307,12 +307,10 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
             reply_markup=InlineKeyboardMarkup(back_keyboard)
         )
     elif data == "get_video":
-        try:
-            video_data = await get_random_video(context)  # Now properly awaited
-        
-            if not video_data:
-                await query.answer("No videos available", show_alert=True)
-                return
+        video = get_random_video()
+        if not video:
+            await query.edit_message_text("No video is configured. Admin must /setvideo first.")
+            return
     
         file_id, cost = video
         current_coins = get_coins(user_id)
@@ -322,8 +320,8 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await context.bot.send_message(
                 chat_id=user_id,
                 text="⛔ You need 2 coins to view videos\n"
-                     f"Your balance: {current_coins} coins\n\n"
-                     "Please top up to continue:",
+                 f"Your balance: {current_coins} coins\n\n"
+                 "Please top up to continue:",
                 reply_markup=InlineKeyboardMarkup([
                     [InlineKeyboardButton("💳 Top Up Coins", callback_data="top_up")],
                     [InlineKeyboardButton("⬅️ Menu", callback_data="main_menu")]

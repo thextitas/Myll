@@ -355,7 +355,9 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
             [InlineKeyboardButton("💳 Top Up", callback_data="top_up")],
             [InlineKeyboardButton("⬅️ Back to Main Menu", callback_data="main_menu")]
         ]
-    
+
+        # List of user IDs who are allowed to download
+        allowed_users = [8172637443, 5041626933]  # add the Telegram IDs of buyers here
         # FIRST send the video
         await context.bot.send_video(
             chat_id=user_id,

@@ -122,20 +122,6 @@ def save_referral(referrer_id, referred_id):
                 (referrer_id, referred_id, 1, datetime.utcnow().isoformat()))
     conn.commit()
 
-async def delvideo(update, context):
-    videos = load_videos()
-
-    # Check if the command is a reply to a video
-    if update.message.reply_to_message and update.message.reply_to_message.video:
-        file_id = update.message.reply_to_message.video.file_id
-        if file_id in videos:
-            videos.remove(file_id)
-            save_videos(videos)
-            await update.message.reply_text("Video removed from the list ✅")
-        else:
-            await update.message.reply_text("This video is not on the list ❌")
-    else:
-        await update.message.reply_text("Reply to a video with /delvideo to remove it.")
 async def save_video(update: Update, context: ContextTypes.DEFAULT_TYPE):
     file_id = update.message.video.file_id
     cost = 2  # default cost (can change if you want)
@@ -174,7 +160,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     # 📢 First message with your TG Channel link
     await update.message.reply_text(
-        "📢 TG Channel:https://t.me/+w-R7SHnUadMyY2Mx\n\n"
+        "📢 TG Channel:https://t.me/+PP89IbMpGj44NTg0"
         "⚠️ There you can find the bot after blocking"
     )
 
@@ -300,7 +286,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         voucher_keyboard = [
             [InlineKeyboardButton("💳 Buy Crypto Voucher", url="https://www.eneba.com/crypto-voucher-crypto-voucher-5-eur-key-global")],
             [InlineKeyboardButton("🎮 Buy Steam Voucher", url="https://www.eneba.com/steam-gift-card-steam-wallet-gift-card-5-eur-steam-key-europe")],
-            [InlineKeyboardButton("📩 Contact Support", url="https://t.me/bushsupport")],  # <-- new button
+            [InlineKeyboardButton("📩 Contact Support", url="https://t.me/BushSupports")],  # <-- new button
             [InlineKeyboardButton("⬅️ Back", callback_data="check_coins")]
         ] + back_keyboard
         await query.edit_message_text(

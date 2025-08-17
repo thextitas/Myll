@@ -121,7 +121,7 @@ def save_referral(referrer_id, referred_id):
                 (referrer_id, referred_id, 1, datetime.utcnow().isoformat()))
     conn.commit()
 
-def get_random_video():
+async def get_random_video(context):  # Added 'async' and 'context' parameter
     """Only returns videos that pass Telegram's validation"""
     cur.execute("SELECT file_id, cost FROM videos ORDER BY RANDOM()")
     for row in cur.fetchall():
@@ -131,8 +131,9 @@ def get_random_video():
             file_info = await context.bot.get_file(file_id)
             if file_info.file_size > 0:  # Basic validity check
                 return (file_id, cost)
-        except:
-            continue  # Skip invalid files
+        except Exception as e:
+            print(f"Skipping invalid video {file_id}: {e}")
+            continue
     return None  # No valid videos found
 # --- Handlers ---
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -306,10 +307,12 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
             reply_markup=InlineKeyboardMarkup(back_keyboard)
         )
     elif data == "get_video":
-        video = get_random_video()
-        if not video:
-            await query.edit_message_text("No video is configured. Admin must /setvideo first.")
-            return
+        try:
+            video_data = await get_random_video(context)  # Now properly awaited
+        
+            if not video_data:
+                await query.answer("No videos available", show_alert=True)
+                return
     
         file_id, cost = video
         current_coins = get_coins(user_id)

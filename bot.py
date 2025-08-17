@@ -160,7 +160,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     # 📢 First message with your TG Channel link
     await update.message.reply_text(
-        "📢 TG Channel:https://t.me/BushBackups"
+        "📢 TG Channe: https://t.me/BushBackups\n"\n
         "⚠️ There you can find the bot after blocking"
     )
 

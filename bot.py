@@ -352,7 +352,6 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
             [InlineKeyboardButton("🎥 Get Another Video (2 coins)", callback_data="get_video")],
             [InlineKeyboardButton("💳 Top Up", callback_data="top_up")],
             [InlineKeyboardButton("⬅️ Back to Main Menu", callback_data="main_menu")]
-    ]
         ]
     
         # FIRST send the video

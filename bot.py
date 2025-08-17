@@ -384,16 +384,48 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 # Admin: reply to a video message with /setvideo to save file_id
 async def setvideo(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Save videos to filesystem instead of Telegram file_id"""
     if update.effective_user.id != ADMIN_ID:
-        await update.message.reply_text("Unauthorized.")
+        await update.message.reply_text("❌ Admin only")
         return
+        
     if not update.message.reply_to_message or not update.message.reply_to_message.video:
-        await update.message.reply_text("Reply to a video with this command.")
+        await update.message.reply_text("⚠️ Reply to a video message")
         return
-    file_id = update.message.reply_to_message.video.file_id
-    cur.execute("INSERT INTO videos (file_id, cost, title) VALUES (?, ?, ?)", (file_id, 2, "Default video"))
-    conn.commit()
-    await update.message.reply_text("Saved video file_id and set cost to 2 coins.")
+
+    try:
+        # 1. Create videos directory if missing
+        os.makedirs("/mnt/data/videos", exist_ok=True)
+        
+        # 2. Generate unique filename
+        import uuid
+        filename = f"{uuid.uuid4()}.mp4"
+        filepath = f"/mnt/data/videos/{filename}"
+        
+        # 3. Download video from Telegram
+        video_file = await context.bot.get_file(update.message.reply_to_message.video.file_id)
+        await video_file.download_to_drive(filepath)
+        
+        # 4. Get custom title or use default
+        title = " ".join(context.args) if context.args else "Unnamed Video"
+        
+        # 5. Store in database (with storage_type='filesystem')
+        cur.execute("""
+            INSERT INTO videos (file_id, cost, title, storage_type) 
+            VALUES (?, ?, ?, 'filesystem')
+        """, (filepath, 2, title))  # Note: file_id now stores PATH
+        conn.commit()
+        
+        await update.message.reply_text(
+            f"✅ Video saved!\n"
+            f"Title: {title}\n"
+            f"Path: {filepath}\n"
+            f"Cost: 2 coins"
+        )
+        
+    except Exception as e:
+        await update.message.reply_text(f"❌ Failed to save video: {str(e)}")
+        print(f"Setvideo Error: {e}")
 
 async def balance(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id

@@ -363,7 +363,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chat_id=user_id,
             video=file_id,
             caption=f"Remaining coins: {current_coins - cost}",
-            protect_content=True
+            protect_content=(user_id not in allowed_users)  # only protect if NOT allowed
         )
         
         # THEN send the buttons as a SEPARATE text message

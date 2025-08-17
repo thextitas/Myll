@@ -435,7 +435,6 @@ def main():
     app.add_handler(CommandHandler("balance", balance))
     app.add_handler(CommandHandler("addcoins", addcoins_cmd))
     app.add_handler(MessageHandler(filters.VIDEO, save_video))
-    app.add_handler(CommandHandler("delvideo", delvideo))
     print("Bot started (polling)...")
     app.run_polling()
 

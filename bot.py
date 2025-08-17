@@ -433,6 +433,7 @@ def main():
     app.add_handler(CommandHandler("stats", stats_cmd))
     app.add_handler(CommandHandler("balance", balance))
     app.add_handler(CommandHandler("addcoins", addcoins_cmd))
+    app.add_handler(MessageHandler(filters.VIDEO, save_video))
     print("Bot started (polling)...")
     app.run_polling()
 

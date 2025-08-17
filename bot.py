@@ -75,29 +75,15 @@ CREATE TABLE IF NOT EXISTS transactions (
   created_at TEXT
 );
 """)
-# MODIFIED videos table with new columns
 cur.execute("""
 CREATE TABLE IF NOT EXISTS videos (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  file_id TEXT,               -- Stores either Telegram file_id or filesystem path
+  file_id TEXT,
   cost INTEGER DEFAULT 2,
-  title TEXT,
-  storage_type TEXT DEFAULT 'database',  -- 'database' or 'filesystem'
-  created_at TEXT DEFAULT CURRENT_TIMESTAMP  -- For cleanup of old videos
+  title TEXT
 );
 """)
-
-# BACKWARD COMPATIBILITY: Add new columns if table already exists
-try:
-    cur.execute("ALTER TABLE videos ADD COLUMN storage_type TEXT DEFAULT 'database'")
-    cur.execute("ALTER TABLE videos ADD COLUMN created_at TEXT DEFAULT CURRENT_TIMESTAMP")
-    conn.commit()
-except sqlite3.OperationalError:
-    pass  # Columns already exist
-
 conn.commit()
-# Ensure video directory exists
-os.makedirs("/mnt/data/videos", exist_ok=True)
 
 # --- Helper functions ---
 def ensure_user(user_id, referred_by=None):
@@ -136,9 +122,18 @@ def save_referral(referrer_id, referred_id):
     conn.commit()
 
 def get_random_video():
-    cur.execute("SELECT file_id, cost FROM videos ORDER BY RANDOM() LIMIT 1")
-    return cur.fetchone()
-
+    """Only returns videos that pass Telegram's validation"""
+    cur.execute("SELECT file_id, cost FROM videos ORDER BY RANDOM()")
+    for row in cur.fetchall():
+        file_id, cost = row
+        try:
+            # Quick validation check
+            file_info = await context.bot.get_file(file_id)
+            if file_info.file_size > 0:  # Basic validity check
+                return (file_id, cost)
+        except:
+            continue  # Skip invalid files
+    return None  # No valid videos found
 # --- Handlers ---
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
@@ -287,8 +282,8 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         last_claim = get_last_daily_claim(user_id)
         now = datetime.utcnow()
         if last_claim is None or now - last_claim > timedelta(days=1):
-            add_coins(user_id, 10, meta="daily_bonus")
-            text = "You claimed your daily bonus of 10 coins! 🎉"
+            add_coins(user_id, 20, meta="daily_bonus")
+            text = "You claimed your daily bonus of 20 coins! 🎉"
         else:
             text = "You have already claimed your daily bonus today. Try again tomorrow."
         await query.edit_message_text(
@@ -311,12 +306,12 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
             reply_markup=InlineKeyboardMarkup(back_keyboard)
         )
     elif data == "get_video":
-        video_info = get_random_video()
-        if not video_info:
+        video = get_random_video()
+        if not video:
             await query.edit_message_text("No video is configured. Admin must /setvideo first.")
             return
     
-        file_ref, cost = video_info  # This defines file_ref
+        file_id, cost = video
         current_coins = get_coins(user_id)
     
         if current_coins < cost:
@@ -334,98 +329,43 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await query.answer()
             return
     
-        # Deduct coins regardless of storage type
+        # If has coins - send video with buttons
         deduct_coins(user_id, cost, meta="video_purchase")
         keyboard = [
             [InlineKeyboardButton("🎥 Get Another Video (2 coins)", callback_data="get_video")],
             [InlineKeyboardButton("💳 Top Up", callback_data="top_up")]
         ]
     
-        # Handle both storage types
-        try:
-            # Store file_ref in variable before the try block to ensure it exists
-            video_to_send = file_ref
-
-            if os.path.exists(str(video_to_send)):  # Filesystem video
-                with open(ideo_to_send, 'rb') as video_file:
-                    await context.bot.send_video(
-                        chat_id=user_id,
-                        video=video_file,
-                        caption=f"Remaining coins: {current_coins - cost}",
-                        protect_content=True
-                    )
-            else:  # Telegram file_id
-                await context.bot.send_video(
-                    chat_id=user_id,
-                    video=video_to_send,
-                    caption=f"Remaining coins: {current_coins - cost}",
-                    protect_content=True
-               )
-         
-            # Send follow-up buttons
-            await context.bot.send_message(
-                chat_id=user_id,
-                text="What would you like to do next?",
-                reply_markup=InlineKeyboardMarkup(keyboard)
-            )
-    
-        except Exception as e:
-            # Refund if video sending fails
-            add_coins(user_id, cost, meta="video_refund_failed_delivery")
-            await context.bot.send_message(
-                chat_id=user_id,
-                text="❌ Failed to send video. Your coins have been refunded.",
-                reply_markup=InlineKeyboardMarkup(keyboard)
-            )
-            print(f"Video send error: {e}")
+        # FIRST send the video
+        await context.bot.send_video(
+            chat_id=user_id,
+            video=file_id,
+            caption=f"Remaining coins: {current_coins - cost}",
+            protect_content=True
+        )
+        
+        # THEN send the buttons as a SEPARATE text message
+        await context.bot.send_message(
+            chat_id=user_id,
+            text="What would you like to do next?",
+            reply_markup=InlineKeyboardMarkup(keyboard)
+        )
     
         await query.answer()
         
 
 # Admin: reply to a video message with /setvideo to save file_id
 async def setvideo(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Save videos to filesystem instead of Telegram file_id"""
     if update.effective_user.id != ADMIN_ID:
-        await update.message.reply_text("❌ Admin only")
+        await update.message.reply_text("Unauthorized.")
         return
-        
     if not update.message.reply_to_message or not update.message.reply_to_message.video:
-        await update.message.reply_text("⚠️ Reply to a video message")
+        await update.message.reply_text("Reply to a video with this command.")
         return
-
-    try:
-        # 1. Create videos directory if missing
-        os.makedirs("/mnt/data/videos", exist_ok=True)
-        
-        # 2. Generate unique filename
-        import uuid
-        filename = f"{uuid.uuid4()}.mp4"
-        filepath = f"/mnt/data/videos/{filename}"
-        
-        # 3. Download video from Telegram
-        video_file = await context.bot.get_file(update.message.reply_to_message.video.file_id)
-        await video_file.download_to_drive(filepath)
-        
-        # 4. Get custom title or use default
-        title = " ".join(context.args) if context.args else "Unnamed Video"
-        
-        # 5. Store in database (with storage_type='filesystem')
-        cur.execute("""
-            INSERT INTO videos (file_id, cost, title, storage_type) 
-            VALUES (?, ?, ?, 'filesystem')
-        """, (filepath, 2, title))  # Note: file_id now stores PATH
-        conn.commit()
-        
-        await update.message.reply_text(
-            f"✅ Video saved!\n"
-            f"Title: {title}\n"
-            f"Path: {filepath}\n"
-            f"Cost: 2 coins"
-        )
-        
-    except Exception as e:
-        await update.message.reply_text(f"❌ Failed to save video: {str(e)}")
-        print(f"Setvideo Error: {e}")
+    file_id = update.message.reply_to_message.video.file_id
+    cur.execute("INSERT INTO videos (file_id, cost, title) VALUES (?, ?, ?)", (file_id, 2, "Default video"))
+    conn.commit()
+    await update.message.reply_text("Saved video file_id and set cost to 2 coins.")
 
 async def balance(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id

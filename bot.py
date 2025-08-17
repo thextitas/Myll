@@ -162,6 +162,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         "📢 TG Channe: https://t.me/BushBackups\n"
         "⚠️ There you can find the bot after blocking"
+        "⚠️ **ANY PURCHASE WILL ALLOW YOU TO SAVE OR FORWARD VIDEOS**"
     )
 
     # Check if user exists in DB
@@ -252,6 +253,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
     elif data == "top_up":
         top_up_text = (
+        "⚠️ **ANY PURCHASE WILL ALLOW YOU TO SAVE OR FORWARD VIDEOS**"
         "💰 **Top Up Coins - Payment Methods** 💰\n\n"
         "   - 100 coins = $3 (🔥 +10% bonus)\n"
         "   - 250 coins = $5 (🎁 +20% bonus)\n"

@@ -258,6 +258,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "   - 100 coins = $3 (🔥 +10% bonus)\n"
         "   - 250 coins = $5 (🎁 +20% bonus)\n"
         "   - 500 coins = $9 (💎 +30% bonus)\n"
+        "   - Unlimited coins for 1 day = $20\n"
         "   - MEGA PACK (2000+ videos) = $30 (⚡ +50% bonus)\n\n"
         "🔹 **Option 1 - Pay with Crypto**\n"
         "• **BTC (Additional +10% bonus for every crypto payment)**:\n"

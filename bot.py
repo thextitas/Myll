@@ -271,7 +271,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "  *MEMO/TAG: REQUIRED if sending from exchanges*\n\n"
         "📌 **After Payment:**\n"
         "1. Send:\n"
-        "   - (press on the "support" tab)\n"
+        "   - (press on the support tab)\n"
         "   - Screenshot of payment\n"
         "   - TX ID (for crypto)\n"
         "   - Selected package (e.g., '500 coins')\n"
@@ -284,7 +284,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "🔹 **Option 2 - Buy Vouchers via Eneba or other places just make sure you can accept the code in european region**\n"
         "Choose from the buttons below."
         "📌 **Choose the wanted ammount from the links**\n"
-        "1. Send me the code from your voucher (press on the "support" tab)\n"
+        "1. Send me the code from your voucher (press on the support tab)\n"
         "2. Wait 5-30 mins for manual approval\n\n"
         "⚠️ **No refunds for invalid or already used codes**"
         )  

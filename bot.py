@@ -253,8 +253,8 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
     elif data == "top_up":
         top_up_text = (
-        "⚠️ **ANY PURCHASE WILL ALLOW YOU TO SAVE OR FORWARD VIDEOS\n\n**"
-        "💰 **Top Up Coins - Payment Methods 💰\n\n"**
+        "⚠️ ANY PURCHASE WILL ALLOW YOU TO SAVE OR FORWARD VIDEOS\n\n"
+        "💰 Top Up Coins - Payment Methods 💰\n\n"
         "   - 100 coins = $3 (🔥 +10% bonus)\n"
         "   - 250 coins = $5 (🎁 +20% bonus)\n"
         "   - 500 coins = $9 (💎 +30% bonus)\n"

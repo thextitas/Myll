@@ -241,6 +241,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         # Show submenu with Check Balance and Daily Bonus buttons
         keyboard = [
             [InlineKeyboardButton("💰 Check Balance", callback_data="check_balance")],
+            [InlineKeyboardButton("Join dc and get free 20 coins", url="https://t.me/Nickbush")],
             [InlineKeyboardButton("💳 Top Up", callback_data="top_up")],
         ] + back_keyboard
         await query.edit_message_text("Choose an option:", reply_markup=InlineKeyboardMarkup(keyboard))

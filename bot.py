@@ -195,7 +195,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # Handle referral only if not already referred, referrer is valid and not the user themselves
     if not already_referred(user_id) and referrer and referrer != user_id:
         ensure_user(referrer)  # Make sure referrer exists in DB
-        add_coins(referrer, 20, meta=f"referral:{user_id}")  # Give 20 coins for referral
+        add_coins(referrer, 10, meta=f"referral:{user_id}")  # Give 10 coins for referral
         save_referral(referrer, user_id)  # Save referral info
 
         # Save referred_by field in user record
@@ -272,7 +272,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "  *MEMO/TAG: REQUIRED if sending from exchanges*\n\n"
         "📌 **After Payment:**\n"
         "1. Send:\n"
-        "   - (press on the support tab)\n"
+        "   - (press on the contact tab)\n"
         "   - Screenshot of payment\n"
         "   - TX ID (for crypto)\n"
         "   - Selected package (e.g., '500 coins')\n"
@@ -285,15 +285,15 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "🔹 **Option 2 - Buy Vouchers via Eneba or other places just make sure you can accept the code in european region**\n"
         "Choose from the buttons below."
         "📌 **Choose the wanted ammount from the links**\n"
-        "1. Send me the code from your voucher (press on the support tab)\n"
+        "1. Send me the code from your voucher (press on the contact tab)\n"
         "2. Wait 5-30 mins for manual approval\n\n"
         "⚠️ **No refunds for invalid or already used codes**"
         )  
         voucher_keyboard = [
             [InlineKeyboardButton("💳 Buy Crypto Voucher", url="https://www.eneba.com/crypto-voucher-crypto-voucher-5-eur-key-global")],
             [InlineKeyboardButton("💳 Buy Steam Voucher", url="https://www.eneba.com/steam-gift-card-steam-wallet-gift-card-5-eur-steam-key-europe")],
-            [InlineKeyboardButton("Support on discord(better choice)", url="https://discord.gg/uVnRHHec")],
-            [InlineKeyboardButton("📩Support Telegram(USE DC IF NOTWORK)", url="https://t.me/Nickbush")],  # <-- new button
+            [InlineKeyboardButton("Contact on discord(better choice)", url="https://discord.gg/uVnRHHec")],
+            [InlineKeyboardButton("📩Contact Here(USE DC IF DOESNTWORK)", url="https://t.me/Nickbush")],  # <-- new button
             [InlineKeyboardButton("⬅️ Back", callback_data="check_coins")]
         ] + back_keyboard
         await query.edit_message_text(
@@ -306,7 +306,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         last_claim = get_last_daily_claim(user_id)
         now = datetime.utcnow()
         if last_claim is None or now - last_claim > timedelta(days=1):
-            add_coins(user_id, 20, meta="daily_bonus")
+            add_coins(user_id, 10, meta="daily_bonus")
             text = "You claimed your daily bonus of 10 coins! 🎉"
         else:
             text = "You have already claimed your daily bonus today. Try again tomorrow."
@@ -326,7 +326,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     elif data == "referral":
         link = f"https://t.me/{(await context.bot.get_me()).username}?start={user_id}"
         await query.edit_message_text(
-            f"Share this link and earn coins (each referal - 20 coins): {link}",
+            f"Share this link and earn coins (each referal - 10 coins): {link}",
             reply_markup=InlineKeyboardMarkup(back_keyboard)
         )
     elif data == "get_video":

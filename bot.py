@@ -292,8 +292,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         voucher_keyboard = [
             [InlineKeyboardButton("💳 Buy Crypto Voucher", url="https://www.eneba.com/crypto-voucher-crypto-voucher-5-eur-key-global")],
             [InlineKeyboardButton("💳 Buy Steam Voucher", url="https://www.eneba.com/steam-gift-card-steam-wallet-gift-card-5-eur-steam-key-europe")],
-            [InlineKeyboardButton("Contact on discord(better choice)", url="https://discord.gg/uVnRHHec")],
-            [InlineKeyboardButton("📩Contact Here(USE DC IF DOESNTWORK)", url="https://t.me/Nickbush")],  # <-- new button
+            [InlineKeyboardButton("📩Contact Support", url="https://t.me/Nickbush")],  # <-- new button
             [InlineKeyboardButton("⬅️ Back", callback_data="check_coins")]
         ] + back_keyboard
         await query.edit_message_text(

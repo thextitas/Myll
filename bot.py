@@ -256,6 +256,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     elif data == "top_up":
         top_up_text = (
         "⚠️ ANY PURCHASE WILL ALLOW YOU TO SAVE OR FORWARD VIDEOS\n\n"
+        "⚠️ ANY PURCHASE MADE WITH CRYPTO OR CRYPTO VOUCHER WILL GET A 20% BONUS \n\n"
         "💰 Top Up Coins - Payment Methods 💰\n\n"
         "   - 100 coins = $3 (🔥 +10% bonus)\n"
         "   - 250 coins = $5 (🎁 +20% bonus)\n"
@@ -263,7 +264,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "   - Unlimited coins for 1 week = $20\n"
         "   - MEGA PACK (2000+ videos) = $30 (⚡ +50% bonus)\n\n"
         "🔹 **Option 1 - Pay with Crypto**\n"
-        "• **BTC (Additional +10% bonus for every crypto payment)**:\n"
+        "• **AVAILABLE CRYPTOS:**:\n"
         "• **BTC (Bitcoin Network)**:\n"
         "  `bc1q5ay582m7q0zwk943d38rzewjxr4av4z6fg5cfj`\n"
         "• **ETH/USDT-ERC20 (Ethereum Network)**:\n"

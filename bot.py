@@ -160,7 +160,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     # 📢 First message with your TG Channel link
     await update.message.reply_text(
-        "📢 TG Channel: https://t.me/BackupBush\n"
+        "📢 TG Channel: https://t.me/+hcU48YBqE0JhNDcx\n"
         "⚠️ Discord(free 20 coins): https://discord.gg/uVnRHHec\n"
         "⚠️ There you can find the bot after blocking\n"
         "⚠️ **ANY PURCHASE WILL ALLOW YOU TO SAVE OR FORWARD VIDEOS**"
@@ -294,7 +294,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         voucher_keyboard = [
             [InlineKeyboardButton("💳 Buy Crypto Voucher", url="https://www.eneba.com/crypto-voucher-crypto-voucher-5-eur-key-global")],
             [InlineKeyboardButton("💳 Buy Steam Voucher", url="https://www.eneba.com/steam-gift-card-steam-wallet-gift-card-5-eur-steam-key-europe")],
-            [InlineKeyboardButton("📩Contact Support", url="https://t.me/Nickbush")],  # <-- new button
+            [InlineKeyboardButton("📩Contact Support", url="https://t.me/BushySupport")],  # <-- new button
             [InlineKeyboardButton("⬅️ Back", callback_data="check_coins")]
         ] + back_keyboard
         await query.edit_message_text(

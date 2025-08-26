@@ -161,7 +161,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # 📢 First message with your TG Channel link
     await update.message.reply_text(
         "📢 TG Channel: https://t.me/+hcU48YBqE0JhNDcx\n"
-        "⚠️ Discord(free 20 coins): https://discord.gg/uVnRHHec\n"
+        "⚠️ Discord(free 20 coins): https://discord.gg/B2bGY6AKn"
         "⚠️ There you can find the bot after blocking\n"
         "⚠️ **ANY PURCHASE WILL ALLOW YOU TO SAVE OR FORWARD VIDEOS**"
     )
@@ -241,7 +241,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         # Show submenu with Check Balance and Daily Bonus buttons
         keyboard = [
             [InlineKeyboardButton("💰 Check Balance", callback_data="check_balance")],
-            [InlineKeyboardButton("Join dc and get free 20 coins", url="https://discord.gg/uVnRHHec")],
+            [InlineKeyboardButton("🎁 Join dc and get free 20 coins", url="https://discord.gg/B2bGY6AK")],
             [InlineKeyboardButton("💳 Top Up", callback_data="top_up")],
         ] + back_keyboard
         await query.edit_message_text("Choose an option:", reply_markup=InlineKeyboardMarkup(keyboard))

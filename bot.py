@@ -363,7 +363,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         ]
 
         # List of user IDs who are allowed to download
-        allowed_users = [8172637443, 5041626933, 5229178575, 6858542775, 7216731920, 8194528857, 5130502442, 8495319504, 8456491775, 6134347475, 6381129054, 5641807440, 5502910136, 6273736774 ]  # add the Telegram IDs of buyers here
+        allowed_users = [8172637443, 5041626933, 5229178575, 6858542775, 7216731920, 8194528857, 5130502442, 8495319504, 8456491775, 6134347475, 6381129054, 5641807440, 5502910136, 6273736774, 7891905177 ]  # add the Telegram IDs of buyers here
         # FIRST send the video
         await context.bot.send_video(
             chat_id=user_id,

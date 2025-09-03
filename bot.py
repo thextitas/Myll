@@ -160,6 +160,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     # 📢 First message with your TG Channel link
     await update.message.reply_text(
+        "⚠️ TG BACKUP: https://t.me/+33B2ZXtQn7EzYjMx\n"
         "⚠️ Discord(free 20 coins): https://discord.gg/WVFXVkDEz3\n"
         "⚠️ There you can find the bot after blocking\n"
         "⚠️ **ANY PURCHASE WILL ALLOW YOU TO SAVE OR FORWARD VIDEOS**"
